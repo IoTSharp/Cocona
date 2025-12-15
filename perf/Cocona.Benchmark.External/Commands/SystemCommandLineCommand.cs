@@ -1,5 +1,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.IO;
 
 namespace Cocona.Benchmark.External.Commands;
 
@@ -10,23 +11,22 @@ public class SystemCommandLineCommand
     public Task<int> ExecuteAsync(string[] args)
     {
         var command = new RootCommand
-        {
-            new Option(new[] {"--str", "-s"})
-            {
-                Argument = new Argument<string?>()
+        { 
+            new Option<string>("string",new[] {"--str", "-s"})
+            { 
+                  
             },
-            new Option(new[] {"--int", "-i"})
+            new Option<int>("int",new[] {"--int", "-i"})
             {
-                Argument = new Argument<int>()
             },
-            new Option(new[] {"--bool", "-b"})
+            new Option<bool>("bool",new[] {"--bool", "-b"})
             {
-                Argument = new Argument<bool>()
             }
         };
-
-        command.Handler = CommandHandler.Create(typeof(SystemCommandLineCommand).GetMethod(nameof(ExecuteHandler)));
-
-        return command.InvokeAsync(args);
+        command.SetAction(parseResult => SystemCommandLineCommand.ExecuteHandler(
+                 parseResult.GetValue<string>("string"),
+                 parseResult.GetValue<int>("int"),
+                 parseResult.GetValue<bool>("bool")));
+        return   command.Parse(args).InvokeAsync();
     }
 }
