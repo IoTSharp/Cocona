@@ -26,10 +26,6 @@ public class Benchmark
     public async ValueTask ExecuteWithCocona() =>
         await Cocona.CoconaApp.RunAsync<CoconaCommand>(Arguments);
 
-    [Benchmark(Description = "ConsoleAppFramework")]
-    public async ValueTask ExecuteWithConsoleAppFramework() =>
-        await Host.CreateDefaultBuilder().RunConsoleAppFrameworkAsync<ConsoleAppFrameworkCommand>(Arguments);
-
     [Benchmark(Description = "CliFx")]
     public async ValueTask<int> ExecuteWithCliFx() =>
         await new CliApplicationBuilder().AddCommand(typeof(CliFxCommand)).Build().RunAsync(Arguments);
